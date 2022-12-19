@@ -1,5 +1,5 @@
-import Post from "../models/Post";
-import User from "../models/User";
+import Post from "../models/Post.js";
+import User from "../models/user.js";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -8,7 +8,7 @@ export const createPost = async (req, res) => {
     const { title, text } = req.body;
     const user = await User.findById(req.userId);
     if (req.files) {
-      let fileName = Data.now().tostring() + req.files.image.name;
+      let fileName = Date.now().toString() + req.files.image.name;
       const __dirname = dirname(fileURLToPath(import.meta.url));
       req.files.image.mv(path.join(__dirname, "..", "uploads", fileName));
 
@@ -38,5 +38,9 @@ export const createPost = async (req, res) => {
         $push: { post: newPostWithoutImage },
       });
       return res.json(newPostWithoutImage);
-  } catch (error) {res.json({message: "Упс... Щось пішло не так!"})}
+  } catch (error) {
+    console.log(error);
+    res.json({
+    message: "Упс... Щось пішло не так!", 
+  })}
 };
