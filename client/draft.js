@@ -26,3 +26,6 @@ const debounce = (fn, ms) => {
 }
 
 debounce(log, 3000)
+
+
+console.log("Hello world")

@@ -33,14 +33,28 @@ export const createPost = async (req, res) => {
       imgUrl: "",
       author: req.userId,
     });
-      await newPostWithoutImage.save();
-      await User.findByIdAndUpdate(req.userId, {
-        $push: { post: newPostWithoutImage },
-      });
-      return res.json(newPostWithoutImage);
+    await newPostWithoutImage.save();
+    await User.findByIdAndUpdate(req.userId, {
+      $push: { post: newPostWithoutImage },
+    });
+    return res.json(newPostWithoutImage);
   } catch (error) {
     console.log(error);
     res.json({
-    message: "Упс... Щось пішло не так!", 
-  })}
+      message: "Упс... Щось пішло не так!",
+    });
+  }
+};
+
+export const getAll = async (req, res) => {
+  try {
+    const posts = await Post.find().sort("-createdAt");
+    const popularPosts = await Post.find().limit(5).sort("-views");
+    if (!posts) {
+      return res.json({ message: "Постів поки що нема" });
+    }
+    res.json({ posts, popularPosts });
+  } catch (error) {
+    res.json({ message: "Щось не так!" });
+  }
 };
