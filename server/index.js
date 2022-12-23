@@ -24,31 +24,30 @@ app.use(fileUpload())
 app.use(express.static("uploads"));
 
 
-
-
 //routes
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postRouter);
 
 
+
 async function start() {
-  try {
-    mongoose.connect(
-      `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.rpgg6bb.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`,
-      () => {
-        console.log("DB connected!!!");
-      }
-    );
-    app.listen(PORT, () => {
-      console.log(`Server listening on port ${PORT}`);
-    });
-  } catch (error) {
-    console.log(error);
-  }
+    try {
+        mongoose.connect(
+            `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.rpgg6bb.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`,
+            () => {
+                console.log("DB connected!!!");
+            }
+        );
+        app.listen(PORT, () => {
+            console.log(`Server listening on port ${PORT}`);
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 app.get("/", (req, res) => {
- return res.json({ successful: true });
+    return res.json({successful: true});
 });
 
 start();
