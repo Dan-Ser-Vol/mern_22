@@ -5,12 +5,14 @@ import {fileURLToPath} from "url";
 
 export const createPost = async (req, res) => {
     try {
-        const {title, text} = req.body;
-        const user = await User.findById(req.userId);
+        const {title, text} = req.body
+        const user = await User.findById(req.userId)
+
+
         if (req.files) {
-            let fileName = Date.now().toString() + req.files.image.name;
-            const __dirname = dirname(fileURLToPath(import.meta.url));
-            req.files.image.mv(path.join(__dirname, "..", "uploads", fileName));
+            let fileName = Date.now().toString() + req.files.image.name
+            const __dirname = dirname(fileURLToPath(import.meta.url))
+           await req.files.image.mv(path.join(__dirname, '..', 'uploads', fileName))
 
             const newPostWithImage = new Post({
                 username: user.username,
@@ -18,33 +20,33 @@ export const createPost = async (req, res) => {
                 text,
                 imgUrl: fileName,
                 author: req.userId,
-            });
-            await newPostWithImage.save();
+            })
+            console.log()
+
+            await newPostWithImage.save()
             await User.findByIdAndUpdate(req.userId, {
-                $push: {post: newPostWithImage},
-            });
-            return res.json(newPostWithImage);
+                $push: {posts: newPostWithImage},
+            })
+
+            return res.json(newPostWithImage)
         }
 
         const newPostWithoutImage = new Post({
             username: user.username,
             title,
             text,
-            imgUrl: "",
+            imgUrl: '',
             author: req.userId,
-        });
-        await newPostWithoutImage.save();
+        })
+        await newPostWithoutImage.save()
         await User.findByIdAndUpdate(req.userId, {
-            $push: {post: newPostWithoutImage},
-        });
-        return res.json(newPostWithoutImage);
+            $push: {posts: newPostWithoutImage},
+        })
+        res.json(newPostWithoutImage)
     } catch (error) {
-        console.log(error);
-        res.json({
-            message: "Упс... Щось пішло не так!",
-        });
+        res.json({message: 'Что-то пошло не так.'})
     }
-};
+}
 
 export const getAll = async (req, res) => {
     try {
@@ -74,3 +76,22 @@ export const getById = async (req, res) => {
         res.json({message: "Щось не так!"});
     }
 };
+
+
+export const getMyPosts = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId)
+        const list = await Promise.all(
+            user.posts.map((post) => {
+                return Post.findById(post._id)
+            })
+        )
+        if (!user) {
+            res.json({message: "not found user "})
+        }
+        res.json(list);
+    } catch (error) {
+        res.json({message: "Щось не так!"});
+    }
+};
+
