@@ -4,8 +4,8 @@ import {createComment, getComment, removeComment, updateComment, getAllComments}
 
 
 const router = new Router()
-router.get("/", checkAuth, getComment)
-router.get("/:id", checkAuth, getAllComments)
+router.get("/:id", checkAuth, getComment)
+router.get("/", checkAuth, getAllComments)
 router.post("/:id", checkAuth, createComment)
 router.put("/:id", checkAuth, updateComment)
 router.delete("/:id", checkAuth, removeComment)
